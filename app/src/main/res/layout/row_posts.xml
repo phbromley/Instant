@@ -10,7 +10,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="10dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -23,25 +24,32 @@
             <TextView
                 android:id="@+id/tvAuthor"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="author"
+                android:textStyle="bold"
+                android:textSize="20sp"/>
+
+            <ImageView
+                android:id="@+id/ivPostImg"
+                android:visibility="gone"
+                android:layout_width="350dp"
+                android:layout_height="350dp"
+                android:src="@drawable/instant_logo"/>
 
             <TextView
                 android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:text="title"
+                android:textSize="15sp"/>
 
             <TextView
                 android:id="@+id/tvBody"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <ImageView
-                android:id="@+id/ivPostImg"
-                android:visibility="gone"
-                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/instant_logo"/>
+                android:text="body"
+                android:textSize="15sp"/>
 
         </LinearLayout>
 
