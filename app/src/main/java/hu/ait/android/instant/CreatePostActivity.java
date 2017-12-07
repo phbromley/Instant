@@ -55,13 +55,14 @@ public class CreatePostActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        requestNeededPermission();
+        //requestNeededPermission();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         btnAttach.setVisibility(View.GONE);
+        requestNeededPermission();
     }
 
     @OnClick(R.id.btnSend)
