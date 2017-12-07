@@ -42,9 +42,8 @@ public class PostsAdapter
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        //View row = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_posts, parent, false);
-        //return new ViewHolder(row);
-        return null;
+        View row = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_posts, parent, false);
+        return new ViewHolder(row);
     }
 
     @Override
@@ -114,11 +113,11 @@ public class PostsAdapter
         public ViewHolder(View itemView) {
             super(itemView);
 
-            /*tvAuthor = itemView.findViewById(R.id.tvAuthor);
+            tvAuthor = itemView.findViewById(R.id.tvAuthor);
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvBody = itemView.findViewById(R.id.tvBody);
             btnDelete = itemView.findViewById(R.id.btnDelete);
-            ivPostImg = itemView.findViewById(R.id.ivPostImg);*/
+            ivPostImg = itemView.findViewById(R.id.ivPostImg);
         }
     }
 }
