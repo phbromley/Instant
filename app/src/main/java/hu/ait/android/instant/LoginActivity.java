@@ -74,10 +74,15 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
                 });
+        login();
     }
 
     @OnClick(R.id.btnLogin)
     void loginClick() {
+        login();
+    }
+
+    private void login() {
         if (!isFormValid()) {
             return;
         }
@@ -113,7 +118,6 @@ public class LoginActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         });
-
     }
 
     private void showProgressDialog() {
