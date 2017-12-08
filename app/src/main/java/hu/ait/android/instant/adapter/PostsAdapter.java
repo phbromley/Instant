@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -107,7 +108,7 @@ public class PostsAdapter
         public TextView tvAuthor;
         public TextView tvTitle;
         public TextView tvBody;
-        public Button btnDelete;
+        public ImageButton btnDelete;
         public ImageView ivPostImg;
 
         public ViewHolder(View itemView) {

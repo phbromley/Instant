@@ -30,8 +30,9 @@
                 android:textSize="20sp"/>
 
             <ImageView
+                android:layout_marginTop="10dp"
                 android:id="@+id/ivPostImg"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:layout_width="350dp"
                 android:layout_height="350dp"
                 android:src="@drawable/instant_logo"/>
@@ -53,13 +54,13 @@
 
         </LinearLayout>
 
-        <Button
+        <ImageButton
             android:id="@+id/btnDelete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:visibility="invisible"
-            android:text="Delete"/>
+            android:visibility="visible"
+            android:src="@drawable/ic_delete" />
 
     </RelativeLayout>
 
