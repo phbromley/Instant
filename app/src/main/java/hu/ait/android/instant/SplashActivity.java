@@ -7,10 +7,15 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class SplashActivity extends AppCompatActivity {
+
+    private FirebaseAuth firebaseAuth;
 
     private class SplashTimer extends TimerTask {
         @Override
@@ -18,9 +23,14 @@ public class SplashActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Intent splashIntent = new Intent();
-                    splashIntent.setClass(SplashActivity.this, LoginActivity.class);
-                    startActivity(splashIntent);
+
+                    FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+                    if (currentUser != null) {
+                        startActivity(new Intent(SplashActivity.this, PostsActivity.class));
+                    } else {
+                        startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                    }
+
                     finish();
                 }
             });
@@ -37,6 +47,7 @@ public class SplashActivity extends AppCompatActivity {
         final Animation anim = AnimationUtils.loadAnimation(
                 SplashActivity.this, R.anim.show_anim);
         layoutContent.startAnimation(anim);
+        firebaseAuth = FirebaseAuth.getInstance();
 
         timer = new Timer();
         timer.schedule(new SplashTimer(), 3000);

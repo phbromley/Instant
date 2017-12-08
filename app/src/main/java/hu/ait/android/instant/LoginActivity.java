@@ -42,6 +42,8 @@ public class LoginActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
     }
 
+
+
     @OnClick(R.id.btnRegister)
     void registerClick() {
         if (!isFormValid()) {
