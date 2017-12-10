@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -21,40 +22,22 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class LoginActivity extends AppCompatActivity {
+public class RegistrationActivity extends AppCompatActivity {
 
-    @BindView(R.id.etEmail)
+    @BindView(R.id.etName)
+    EditText etName;
+    @BindView(R.id.etEmailReg)
     EditText etEmail;
-    @BindView(R.id.etPassword)
+    @BindView(R.id.etPass)
     EditText etPassword;
 
     private FirebaseAuth firebaseAuth;
     private ProgressDialog progressDialog;
 
-    /*  THINGS TO ACCOMPLISH:
-    *  - have users enter more info in registration (Full name, maybe picture and bio ?)
-    *       -- have registration button take you to new activity to enter in info and from there
-    *           enter the feed and login
-    *  - setup Profile fragment
-    *       -- have picture ? full name and bio at the top, then recycler view underneath of
-    *           all their posted photos
-    *             --- this can probably be most easily achieved by altering the PostsAdapter to only
-    *                  display posts with your UID - adding in this functionality is necessary bc
-    *                  your feed is only supposed to be people you follow anyway
-    *       -- build in followers and following ?
-    *             --- find way to store lists of user UID's and then can just make a simple fragment
-    *                  containing recyclerview of users where each row take you to their profile page
-    *  - make feed only users you follow and yourself
-    *  - implement search ? make the middle tab in the bottom navigation view search fragment
-    *  - make it follow its original purpose of only allowing posting in a certain gap of time each day
-    *  - look into every activity transition and make sure the back stack is maintained properly
-    *       -- example: cannot hit back button to go back to login, must logout
-    * */
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_registration);
 
         ButterKnife.bind(this);
 
@@ -63,11 +46,43 @@ public class LoginActivity extends AppCompatActivity {
 
     @OnClick(R.id.btnRegister)
     void registerClick() {
-        startActivity(new Intent(LoginActivity.this, RegistrationActivity.class));
+        if (!isFormValid()) {
+            return;
+        }
+
+        showProgressDialog();
+
+        // FIGURE OUT HOW TO ALSO STORE THEIR NAME AND OTHER DATA also throw logout button
+        // in profile somewhere just to test this functionality and hook it up !
+
+        firebaseAuth.createUserWithEmailAndPassword(etEmail.getText().toString(),
+                etPassword.getText().toString()).addOnCompleteListener(
+                new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        progressDialog.dismiss();
+
+                        if (task.isSuccessful()) {
+                            FirebaseUser fbUser = task.getResult().getUser();
+
+                            fbUser.updateProfile(
+                                    new UserProfileChangeRequest.Builder().
+                                            setDisplayName(usernameFromEmail(fbUser.getEmail())).build()
+                            );
+
+
+                            Toast.makeText(RegistrationActivity.this,
+                                    "Registration ok", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(RegistrationActivity.this, "Error: "+
+                                    task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+        login();
     }
 
-    @OnClick(R.id.btnLogin)
-    void loginClick() {
+    private void login() {
         if (!isFormValid()) {
             return;
         }
@@ -83,11 +98,11 @@ public class LoginActivity extends AppCompatActivity {
                 progressDialog.dismiss();
 
                 if (task.isSuccessful()) {
-                    startActivity(new Intent(LoginActivity.this,
+                    startActivity(new Intent(RegistrationActivity.this,
                             BottomNavActivity.class));
 
                 } else {
-                    Toast.makeText(LoginActivity.this,
+                    Toast.makeText(RegistrationActivity.this,
                             "Error: "+task.getException().getMessage(),
                             Toast.LENGTH_SHORT).show();
                 }
@@ -95,7 +110,7 @@ public class LoginActivity extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(LoginActivity.this,
+                Toast.makeText(RegistrationActivity.this,
                         "Error: "+e.getMessage(),
                         Toast.LENGTH_SHORT).show();
 
@@ -103,7 +118,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-
 
     private void showProgressDialog() {
         if (progressDialog == null) {
@@ -127,6 +141,15 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         return true;
+    }
+
+
+    private String usernameFromEmail(String email) {
+        if (email.contains("@")) {
+            return email.split("@")[0];
+        } else {
+            return email;
+        }
     }
 
 }
