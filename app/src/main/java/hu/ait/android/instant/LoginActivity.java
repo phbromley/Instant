@@ -42,8 +42,6 @@ public class LoginActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
     }
 
-
-
     @OnClick(R.id.btnRegister)
     void registerClick() {
         if (!isFormValid()) {
@@ -100,9 +98,8 @@ public class LoginActivity extends AppCompatActivity {
                 progressDialog.dismiss();
 
                 if (task.isSuccessful()) {
-                    // open messages Activity
                     startActivity(new Intent(LoginActivity.this,
-                            PostsActivity.class));
+                            BottomNavActivity.class));
 
                 } else {
                     Toast.makeText(LoginActivity.this,

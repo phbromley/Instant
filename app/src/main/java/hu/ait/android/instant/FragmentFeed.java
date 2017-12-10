@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,9 +30,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import hu.ait.android.instant.adapter.PostsAdapter;
 import hu.ait.android.instant.data.Post;
 
-/**
- * Created by mchen16 on 12/7/17.
- */
 
 public class FragmentFeed extends Fragment {
 
@@ -43,7 +41,7 @@ public class FragmentFeed extends Fragment {
 
         View viewRoot = inflater.inflate(R.layout.fragment_feed, container, false);
 
-        RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerViewPosts2);
+        RecyclerView recyclerView = (RecyclerView) viewRoot.findViewById(R.id.recyclerViewPosts2);
         adapter = new PostsAdapter(getActivity(), FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -57,7 +55,7 @@ public class FragmentFeed extends Fragment {
         return viewRoot;
     }
 
-    PostsAdapter adapter;
+    private PostsAdapter adapter;
 
 
     private void initPostsListener() {
@@ -91,19 +89,8 @@ public class FragmentFeed extends Fragment {
         });
     }
 
-//    @SuppressWarnings("StatementWithEmptyBody")
-//    @Override
-//    public boolean onNavigationItemSelected(MenuItem item) {
-//        // Handle navigation view item clicks here.
-//        int id = item.getItemId();
-//
 //        if (id == R.id.nav_logout) {
 //            FirebaseAuth.getInstance().signOut();
 //            finish();
 //        }
-//
-//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-//        drawer.closeDrawer(GravityCompat.START);
-//        return true;
-//    }
 }

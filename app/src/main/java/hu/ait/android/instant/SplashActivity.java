@@ -1,6 +1,7 @@
 package hu.ait.android.instant;
 
 import android.content.Intent;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.animation.Animation;
@@ -26,7 +27,7 @@ public class SplashActivity extends AppCompatActivity {
 
                     FirebaseUser currentUser = firebaseAuth.getCurrentUser();
                     if (currentUser != null) {
-                        startActivity(new Intent(SplashActivity.this, PostsActivity.class));
+                        startActivity(new Intent(SplashActivity.this, BottomNavActivity.class));
                     } else {
                         startActivity(new Intent(SplashActivity.this, LoginActivity.class));
                     }

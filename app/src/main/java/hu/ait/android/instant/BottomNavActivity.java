@@ -9,9 +9,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class BottomNavActivity extends AppCompatActivity {
 
-    private TextView mTextMessage;
+    @BindView(R.id.navigation)
+    BottomNavigationView mBottomNav;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -20,13 +24,13 @@ public class BottomNavActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_feed:
-                    mTextMessage.setText(R.string.feed);
+                    showFragment(FragmentFeed.TAG);
                     return true;
                 case R.id.navigation_post:
-                    mTextMessage.setText(R.string.post);
+                    showFragment(FragmentFeed.TAG);
                     return true;
                 case R.id.navigation_profile:
-                    mTextMessage.setText(R.string.profile);
+                    showFragment(FragmentProfile.TAG);
                     return true;
             }
             return false;
@@ -38,9 +42,11 @@ public class BottomNavActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bottom_nav);
 
-        mTextMessage = (TextView) findViewById(R.id.message);
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        ButterKnife.bind(this);
+
+        mBottomNav.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        showFragment(FragmentFeed.TAG);
     }
 
     public void showFragment(String fragmentTag) {
@@ -53,9 +59,9 @@ public class BottomNavActivity extends AppCompatActivity {
                 case FragmentFeed.TAG:
                     newFragment = new FragmentFeed();
                     break;
-//                case FragmentGallery.TAG:
-//                    newFragment = new FragmentGallery();
-//                    break;
+                case FragmentProfile.TAG:
+                    newFragment = new FragmentProfile();
+                    break;
                 default:
                     newFragment = new FragmentFeed();
                     break;
