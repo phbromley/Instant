@@ -31,6 +31,23 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private ProgressDialog progressDialog;
 
+    /*  THINGS TO ACCOMPLISH:
+    *  - have users enter more info in registration (Full name, maybe picture and bio ?)
+    *       -- have registration button take you to new activity to enter in info and from there
+    *           enter the feed and login
+    *  - setup Profile fragment
+    *       -- have picture ? full name and bio at the top, then recycler view underneath of
+    *           all their posted photos
+    *             --- this can probably be most easily achieved by altering the PostsAdapter to only
+    *                  display posts with your UID - adding in this functionality is necessary bc
+    *                  your feed is only supposed to be people you follow anyway
+    *       -- build in followers and following ?
+    *             --- find way to store lists of user UID's and then can just make a simple fragment
+    *                  containing recyclerview of users where each row take you to their profile page
+    *  - make feed only users you follow and yourself
+    *  - implement search ? make the middle tab in the bottom navigation view search fragment
+    *  - make it follow its original purpose of only allowing posting in a certain gap of time each day
+    * */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

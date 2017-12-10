@@ -9,14 +9,6 @@
     android:layout_height="match_parent"
     tools:context="hu.ait.android.instant.BottomNavActivity">
 
-    <!--<FrameLayout
-        android:id="@+id/frame_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/navigation"
-        android:animateLayoutChanges="true">
-    </FrameLayout>-->
-
     <include
         layout="@layout/app_bar_main"
         android:layout_height="match_parent"
@@ -30,4 +22,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:background="@color/cardview_light_background"
         app:menu="@menu/navigation"/>
+
 </android.support.constraint.ConstraintLayout>
