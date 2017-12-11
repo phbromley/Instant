@@ -68,6 +68,7 @@ public class FragmentProfile extends Fragment {
 
         ButterKnife.bind(this, viewRoot);
 
+        // TODO
         // ALTER TO ALLOW FOR OTHER PROFILE VIEWING
         user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -77,7 +78,6 @@ public class FragmentProfile extends Fragment {
     }
 
     private void setupProfile(View view) {
-        // set up to only show profile you're viewing -> should just be special querying
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerViewPosts3);
         adapter = new PostsAdapter(getActivity(), user.getUid());
 
@@ -121,6 +121,7 @@ public class FragmentProfile extends Fragment {
                     tvFollowing.setText(String.valueOf(following.size()));
                 }
 
+                // TODO
                 // if NOT your profile, make follow button visible and settings invisible
             }
 

@@ -88,9 +88,4 @@ public class FragmentFeed extends Fragment {
             }
         });
     }
-
-//        if (id == R.id.nav_logout) {
-//            FirebaseAuth.getInstance().signOut();
-//            finish();
-//        }
 }

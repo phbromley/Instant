@@ -46,15 +46,23 @@ public class LoginActivity extends AppCompatActivity {
     *
     *           DONE -> querying is all that is necessary
     *
-    *       -- build in followers and following ?
+    *       -- build in followers and following
     *             --- find way to store lists of user UID's and then can just make a simple fragment
     *                  containing recyclerview of users where each row take you to their profile page
+    *                   ---- things currently needing to be done:
+    *                       > all the things I've aggressively commented in FragmentProfile,
+    *                           FragmentFollow and FollowAdapter
+    *
     *  - make feed only users you follow and yourself
+    *       -- can be attained by selective querying loop in similar fashion to profile
+    *
     *  - implement search ? make the middle tab in the bottom navigation view search fragment
-    *       -- not really important for demo but if we have time : Peter this does not mean to just ignore it forever
+    *       -- not really important for demo but if we have time
+    *
     *  - make it follow its original purpose of only allowing posting in a certain gap of time each day
+    *
     *  - look into every activity transition and make sure the back stack is maintained properly
-    *       -- example: cannot hit back button to go back to login, must logout
+    *       -- example: cannot hit back button to go back to login, must logout and settings saving
     * */
 
     @Override
@@ -68,12 +76,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.btnRegister)
-    void registerClick() {
+    public void registerClick() {
         startActivity(new Intent(LoginActivity.this, RegistrationActivity.class));
     }
 
     @OnClick(R.id.btnLogin)
-    void loginClick() {
+    public void loginClick() {
         if (!isFormValid()) {
             return;
         }
