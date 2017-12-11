@@ -21,8 +21,8 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingLeft="20dp"
-                android:paddingTop="20dp">
+                android:paddingLeft="15dp"
+                android:paddingTop="15dp">
 
                 <ImageView
                     android:id="@+id/ivAvatar"
@@ -39,29 +39,31 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/ivAvatar"
                     android:text="Name Here"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:layout_marginRight="30dp"/>
 
                 <LinearLayout
                     android:id="@+id/layoutNumbers"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:layout_toRightOf="@+id/ivAvatar"
                     android:orientation="vertical"
-                    android:paddingBottom="20dp">
+                    android:paddingBottom="20dp"
+                    android:layout_marginRight="30dp">
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:weightSum="3">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_marginRight="10dp"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:layout_weight="1">
 
                             <TextView
                                 android:id="@+id/tvPublications"
@@ -74,7 +76,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/posts"
-                                android:textSize="12sp" />
+                                android:textSize="12sp"
+                                android:layout_gravity="center"/>
 
                         </LinearLayout>
 
@@ -83,8 +86,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_marginRight="10dp"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:layout_weight="1">
 
                             <TextView
                                 android:id="@+id/tvFollowers"
@@ -97,7 +100,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/followers"
-                                android:textSize="12sp" />
+                                android:textSize="12sp"
+                                android:layout_gravity="center"/>
 
                         </LinearLayout>
 
@@ -106,7 +110,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:layout_weight="1">
 
                             <TextView
                                 android:id="@+id/tvFollowing"
@@ -119,7 +124,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/following"
-                                android:textSize="12sp" />
+                                android:textSize="12sp"
+                                android:layout_gravity="center" />
 
                         </LinearLayout>
 
@@ -140,7 +146,8 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/layoutNumbers"
                     android:layout_toRightOf="@+id/tvName"
-                    android:paddingLeft="20dp"
+                    android:paddingLeft="0dp"
+                    android:layout_marginTop="15dp"
                     android:text="bio bio bio bio"/>
 
                 <ImageButton
@@ -149,7 +156,8 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentRight="true"
-                    android:src="@android:drawable/ic_menu_preferences" />
+                    android:layout_marginRight="30dp"
+                    android:src="@drawable/ic_settings"/>
 
             </RelativeLayout>
 
