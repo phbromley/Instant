@@ -26,8 +26,9 @@
         <activity
             android:name=".BottomNavActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".RegistrationActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".RegistrationActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

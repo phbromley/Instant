@@ -104,8 +104,7 @@ public class FragmentProfile extends Fragment {
 
                 tvName.setText(userInfo.getFullName());
                 tvBio.setText(userInfo.getBiography());
-                //tvPosts.setText(String.valueOf(adapter.getItemCount()));
-                tvPosts.setText("2");
+                tvPosts.setText(String.valueOf(adapter.getItemCount()));
 
                 followers = userInfo.getFollowers();
                 following = userInfo.getFollowing();
@@ -149,7 +148,7 @@ public class FragmentProfile extends Fragment {
 
     @OnClick(R.id.btnSettings)
     public void openSettings() {
-
+        ((BottomNavActivity)getActivity()).showFragment(FragmentSettings.TAG);
     }
 
     @OnClick(R.id.btnFollow)

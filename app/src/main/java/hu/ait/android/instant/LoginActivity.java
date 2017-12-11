@@ -43,11 +43,15 @@ public class LoginActivity extends AppCompatActivity {
     *           all their posted photos
     *             --- this can probably be most easily achieved by using special querying as can
     *                   be explained in https://firebase.google.com/docs/database/admin/retrieve-data#section-complex-queries
+    *
+    *           DONE -> querying is all that is necessary
+    *
     *       -- build in followers and following ?
     *             --- find way to store lists of user UID's and then can just make a simple fragment
     *                  containing recyclerview of users where each row take you to their profile page
     *  - make feed only users you follow and yourself
     *  - implement search ? make the middle tab in the bottom navigation view search fragment
+    *       -- not really important for demo but if we have time : Peter this does not mean to just ignore it forever
     *  - make it follow its original purpose of only allowing posting in a certain gap of time each day
     *  - look into every activity transition and make sure the back stack is maintained properly
     *       -- example: cannot hit back button to go back to login, must logout

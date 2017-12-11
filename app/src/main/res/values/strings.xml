@@ -25,4 +25,11 @@
     <string name="followers">Followers</string>
     <string name="following">Followingg</string>
     <string name="follow">Follow</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="change_profile_photo">Change Profile Photo</string>
+    <string name="name">Name</string>
+    <string name="username">Username</string>
+    <string name="biography">Biography</string>
+    <string name="logout">Logout</string>
+    <string name="save">Save</string>
 </resources>

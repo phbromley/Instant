@@ -1,5 +1,6 @@
 package hu.ait.android.instant;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -8,6 +9,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -75,4 +78,11 @@ public class BottomNavActivity extends AppCompatActivity {
         ft.commit();
     }
 
+    public void logout() {
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(BottomNavActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
+    }
 }
