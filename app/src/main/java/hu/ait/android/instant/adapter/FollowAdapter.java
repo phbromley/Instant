@@ -12,6 +12,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -29,12 +32,15 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder
     private List<User> userList;
     private List<String> userKeys;
     private String uId;
+    private User userInfo;
     private DatabaseReference usersRef;
     private boolean isFollower;
 
     public FollowAdapter(Context context, String uId, List<User> accounts, boolean isFollower) {
         this.context = context;
         this.uId = uId;
+
+        loadUser();
 
         userList = accounts;
         userKeys = new ArrayList<String>();
@@ -44,7 +50,6 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder
         this.isFollower = isFollower;
     }
 
-
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View row = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_user, parent, false);
@@ -53,19 +58,13 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        final User userInfo = userList.get(position);
+        final User user = userList.get(position);
 
-        // might not need ?
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference();
+        holder.tvLilName.setText(user.getFullName());
+        holder.tvLilDisplayName.setText(user.getDisplayName());
 
-        DatabaseReference usersRef = ref.child("users");
-
-        holder.tvLilName.setText(userInfo.getFullName());
-        holder.tvLilDisplayName.setText(userInfo.getDisplayName());
-
-        if (userInfo.getPhotoURL() != null) {
-            Glide.with(context).load(userInfo.getPhotoURL()).into(holder.ivLilAvatar);
+        if (user.getPhotoURL() != null) {
+            Glide.with(context).load(user.getPhotoURL()).into(holder.ivLilAvatar);
         } else {
             holder.ivLilAvatar.setImageResource(R.drawable.instant_logo);
         }
@@ -87,7 +86,7 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder
                     holder.btnChangeFollow.setText(R.string.unfollow);
 
                     // deal w following
-                    addUser(userInfo, userInfo.getUId());
+                    addUser(user);
                 }
             }
         });
@@ -101,39 +100,80 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder
         });
     }
 
+    public void makeFollowChanges() {
+
+    }
+
     @Override
     public int getItemCount() {
         return userList.size();
     }
 
-    public void addUser(User user, String key) {
-        /*userList.add(user);
-        userKeys.add(key);
+    // TODO MATT fix this shit tomorrow
+    // implement a stack kind of thing where you keep track of unfollowing and following
+    //   actually perform changes in makeFollowChanges
 
-        notifyDataSetChanged();*/
+    public void addUser(User user) {
+        /*List<User> following = userInfo.getFollowing();
+        following.add(user);
 
-        // i think this is putting user into following
+        saveNewUserProfile(following);*/
     }
 
     public void removeUser(int index) {
-        // change path in here so that it points to my list thingy
-        /*usersRef.child(userKeys.get(index)).removeValue();
+        /*List<User> following = userInfo.getFollowing();
+        following.remove(index);
 
-        userList.remove(index);
-        userKeys.remove(index);
-
-        remove user from following -> dont fuck w followers
-
-        //notifyItemRemoved(index);*/
+        saveNewUserProfile(following);*/
     }
 
-    public void removeUserByKey(String key) {
-        int index = userKeys.indexOf(key);
-        if (index != -1) {
-            userList.remove(index);
-            userKeys.remove(index);
-            notifyItemRemoved(index);
-        }
+    private void saveNewUserProfile(List<User> following) {
+        User newUserProfile = new User(userInfo.getFullName(), uId,
+                userInfo.getDisplayName(), userInfo.getBiography());
+        newUserProfile.setPhotoURL(userInfo.getPhotoURL());
+        newUserProfile.setFollowers(userInfo.getFollowers());
+        newUserProfile.setFollowing(following);
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference();
+
+        DatabaseReference usersRef = ref.child("users");
+
+        usersRef.child(uId).setValue(newUserProfile);
+    }
+
+    private void loadUser() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference();
+
+        DatabaseReference usersRef = ref.child("users");
+
+        usersRef.orderByKey().equalTo(uId).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                userInfo = dataSnapshot.getValue(User.class);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

@@ -86,13 +86,13 @@ public class FragmentSettings extends Fragment {
 
         DatabaseReference usersRef = ref.child("users");
 
-        if(user.getPhotoUrl() != null)
-            Glide.with(getActivity()).load(user.getPhotoUrl()).into(ivEtAvatar);
-
         usersRef.orderByKey().equalTo(user.getUid()).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 userInfo = dataSnapshot.getValue(User.class);
+
+                if(userInfo.getPhotoURL() != null)
+                    Glide.with(getActivity()).load(userInfo.getPhotoURL()).into(ivEtAvatar);
 
                 etSetName.setText(userInfo.getFullName());
                 etSetBio.setText(userInfo.getBiography());

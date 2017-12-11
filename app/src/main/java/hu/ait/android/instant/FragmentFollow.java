@@ -46,6 +46,12 @@ public class FragmentFollow extends Fragment {
         return viewRoot;
     }
 
+    @Override
+    public void onPause() {
+        adapter.makeFollowChanges();
+        super.onPause();
+    }
+
     private void initRecyclerView(View view) {
         final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerViewFollow);
 

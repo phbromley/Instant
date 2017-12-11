@@ -1,11 +1,5 @@
 package hu.ait.android.instant.data;
 
-// only necessary to store things related to the user that are not:
-//   - email
-//   - display name (username) ACTUALLY display name is used for account identification
-//   - password
-//   - photo URL (avatar)
-
 import java.util.ArrayList;
 import java.util.List;
 
