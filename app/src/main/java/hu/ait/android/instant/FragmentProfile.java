@@ -29,6 +29,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import hu.ait.android.instant.adapter.PostsAdapter;
+import hu.ait.android.instant.data.Post;
 import hu.ait.android.instant.data.User;
 
 public class FragmentProfile extends Fragment {
@@ -76,6 +77,18 @@ public class FragmentProfile extends Fragment {
     }
 
     private void setupProfile(View view) {
+        // set up to only show profile you're viewing -> should just be special querying
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerViewPosts3);
+        adapter = new PostsAdapter(getActivity(), user.getUid());
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager.setReverseLayout(true);
+        layoutManager.setStackFromEnd(true);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
+
+        initPostsListener();
+
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference();
 
@@ -132,16 +145,6 @@ public class FragmentProfile extends Fragment {
 
             }
         });
-
-
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerViewPosts3);
-        adapter = new PostsAdapter(getActivity(), user.getUid());
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        layoutManager.setReverseLayout(true);
-        layoutManager.setStackFromEnd(true);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(adapter);
     }
 
     @OnClick(R.id.btnSettings)
@@ -152,5 +155,36 @@ public class FragmentProfile extends Fragment {
     @OnClick(R.id.btnFollow)
     public void followUser() {
 
+    }
+
+    private void initPostsListener() {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("posts");
+        reference.orderByChild("uid").equalTo(user.getUid()).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Post post = dataSnapshot.getValue(Post.class);
+                adapter.addPost(post, dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                adapter.removePostByKey(dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }

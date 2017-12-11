@@ -41,9 +41,8 @@ public class LoginActivity extends AppCompatActivity {
     *  - setup Profile fragment
     *       -- have picture ? full name and bio at the top, then recycler view underneath of
     *           all their posted photos
-    *             --- this can probably be most easily achieved by altering the PostsAdapter to only
-    *                  display posts with your UID - adding in this functionality is necessary bc
-    *                  your feed is only supposed to be people you follow anyway
+    *             --- this can probably be most easily achieved by using special querying as can
+    *                   be explained in https://firebase.google.com/docs/database/admin/retrieve-data#section-complex-queries
     *       -- build in followers and following ?
     *             --- find way to store lists of user UID's and then can just make a simple fragment
     *                  containing recyclerview of users where each row take you to their profile page
