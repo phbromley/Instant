@@ -18,7 +18,10 @@ public class User {
     private List<User> following;
     private List<User> followers;
 
-    public User() {}
+    public User() {
+        following = new ArrayList<>();
+        followers = new ArrayList<>();
+    }
 
     public User(String fullName, String uId) {
         this.fullName = fullName;

@@ -1,7 +1,5 @@
 package hu.ait.android.instant;
 
-import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,6 +12,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -30,6 +29,7 @@ public class FragmentSettings extends Fragment {
     public static final String TAG = "FragmentSettings";
 
     private FirebaseUser user;
+    private User userInfo;
 
     @BindView(R.id.ivEtAvatar)
     ImageView ivEtAvatar;
@@ -70,7 +70,7 @@ public class FragmentSettings extends Fragment {
         usersRef.orderByKey().equalTo(user.getUid()).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                User userInfo = dataSnapshot.getValue(User.class);
+                userInfo = dataSnapshot.getValue(User.class);
 
                 etSetName.setText(userInfo.getFullName());
                 etSetBio.setText(userInfo.getBiography());
@@ -113,6 +113,29 @@ public class FragmentSettings extends Fragment {
     public void saveSettings() {
         // TODO should really check validity of these but who cares
         String newName = etSetName.getText().toString();
+        String newDisplayName = etSetDispName.getText().toString();
+        String newBio = etSetBio.getText().toString();
+
+        if(!newDisplayName.equals(user.getDisplayName())) {
+            user.updateProfile(
+                    new UserProfileChangeRequest.Builder().
+                            setDisplayName(newDisplayName).build()
+            );
+        }
+
+        User newUserProfile = new User(newName, user.getUid(), newBio);
+        newUserProfile.setFollowers(userInfo.getFollowers());
+        newUserProfile.setFollowing(userInfo.getFollowing());
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference();
+
+        DatabaseReference usersRef = ref.child("users");
+
+        usersRef.child(user.getUid()).setValue(newUserProfile);
+
+        // ALSO make sure to eliminate settings fragment from fragment backstack ????
+        ((BottomNavActivity)getActivity()).showFragment(FragmentProfile.TAG);
     }
 
 
