@@ -35,6 +35,9 @@ public class LoginActivity extends AppCompatActivity {
     *  - have users enter more info in registration (Full name, maybe picture and bio ?)
     *       -- have registration button take you to new activity to enter in info and from there
     *           enter the feed and login
+    *
+    *           DONE -> picture and bio can be edited from profile settings
+    *
     *  - setup Profile fragment
     *       -- have picture ? full name and bio at the top, then recycler view underneath of
     *           all their posted photos

@@ -17,10 +17,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import hu.ait.android.instant.data.User;
 
 public class RegistrationActivity extends AppCompatActivity {
 
@@ -70,9 +73,10 @@ public class RegistrationActivity extends AppCompatActivity {
                                             setDisplayName(usernameFromEmail(fbUser.getEmail())).build()
                             );
 
+                            saveUserFullName(fbUser.getUid(), etName.getText().toString());
 
                             Toast.makeText(RegistrationActivity.this,
-                                    "Registration ok", Toast.LENGTH_SHORT).show();
+                                    "Registered!", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(RegistrationActivity.this, "Error: "+
                                     task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -80,6 +84,15 @@ public class RegistrationActivity extends AppCompatActivity {
                     }
                 });
         login();
+    }
+
+    private void saveUserFullName(String uId, String fullName) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference();
+
+        DatabaseReference usersRef = ref.child("users");
+
+        usersRef.child(uId).setValue(new User(fullName, uId));
     }
 
     private void login() {
@@ -122,7 +135,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private void showProgressDialog() {
         if (progressDialog == null) {
             progressDialog = new ProgressDialog(this);
-            progressDialog.setMessage("Wait for it...");
+            progressDialog.setMessage("Registering...");
         }
 
         progressDialog.show();

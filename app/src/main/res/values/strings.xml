@@ -21,4 +21,8 @@
     <string name="password">Password</string>
     <string name="register">Register</string>
     <string name="email">email</string>
+    <string name="posts">Posts</string>
+    <string name="followers">Followers</string>
+    <string name="following">Followingg</string>
+    <string name="follow">Follow</string>
 </resources>
