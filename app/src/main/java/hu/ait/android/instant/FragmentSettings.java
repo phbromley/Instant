@@ -123,7 +123,8 @@ public class FragmentSettings extends Fragment {
             );
         }
 
-        User newUserProfile = new User(newName, user.getUid(), newBio);
+        User newUserProfile = new User(newName, user.getUid(), newDisplayName, newBio);
+        newUserProfile.setPhotoURL(userInfo.getPhotoURL());
         newUserProfile.setFollowers(userInfo.getFollowers());
         newUserProfile.setFollowing(userInfo.getFollowing());
 

@@ -68,6 +68,9 @@ public class BottomNavActivity extends AppCompatActivity {
                 case FragmentSettings.TAG:
                     newFragment = new FragmentSettings();
                     break;
+                case FragmentFollow.TAG:
+                    newFragment = new FragmentFollow();
+                    break;
                 default:
                     newFragment = new FragmentFeed();
                     break;

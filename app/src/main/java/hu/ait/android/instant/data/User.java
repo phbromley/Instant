@@ -12,8 +12,10 @@ import java.util.List;
 public class User {
 
     private String fullName;
+    private String displayName;
     private String uId;
     private String biography;
+    private String photoURL;
 
     private List<User> following;
     private List<User> followers;
@@ -23,18 +25,20 @@ public class User {
         followers = new ArrayList<>();
     }
 
-    public User(String fullName, String uId) {
+    public User(String fullName, String uId, String displayName) {
         this.fullName = fullName;
         this.uId = uId;
+        this.displayName = displayName;
         biography = "";
 
         following = new ArrayList<>();
         followers = new ArrayList<>();
     }
 
-    public User(String fullName, String uId, String biography) {
+    public User(String fullName, String uId, String displayName, String biography) {
         this.fullName = fullName;
         this.uId = uId;
+        this.displayName = displayName;
         this.biography = biography;
 
         following = new ArrayList<>();
@@ -81,6 +85,9 @@ public class User {
         following.remove(user);
     }
 
+    // TODO
+    // FIGURE OUT HOW TO MAINTAIN FOLLOWERS
+
     public List<User> getFollowers() {
         return followers;
     }
@@ -89,5 +96,19 @@ public class User {
         this.followers = followers;
     }
 
-    // FIGURE OUT HOW TO MAINTAIN FOLLOWERS
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getPhotoURL() {
+        return photoURL;
+    }
+
+    public void setPhotoURL(String photoURL) {
+        this.photoURL = photoURL;
+    }
 }

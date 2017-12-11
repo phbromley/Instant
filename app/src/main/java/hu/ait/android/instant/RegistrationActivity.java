@@ -55,9 +55,6 @@ public class RegistrationActivity extends AppCompatActivity {
 
         showProgressDialog();
 
-        // FIGURE OUT HOW TO ALSO STORE THEIR NAME AND OTHER DATA also throw logout button
-        // in profile somewhere just to test this functionality and hook it up !
-
         firebaseAuth.createUserWithEmailAndPassword(etEmail.getText().toString(),
                 etPassword.getText().toString()).addOnCompleteListener(
                 new OnCompleteListener<AuthResult>() {
@@ -73,7 +70,10 @@ public class RegistrationActivity extends AppCompatActivity {
                                             setDisplayName(usernameFromEmail(fbUser.getEmail())).build()
                             );
 
-                            saveUserFullName(fbUser.getUid(), etName.getText().toString());
+                            //fbUser.updateProfile(new UserProfileChangeRequest.Builder().setPhotoUri())
+
+                            saveUserFullName(fbUser.getUid(), etName.getText().toString(),
+                                    usernameFromEmail(fbUser.getEmail()));
 
                             Toast.makeText(RegistrationActivity.this,
                                     "Registered!", Toast.LENGTH_SHORT).show();
@@ -86,13 +86,13 @@ public class RegistrationActivity extends AppCompatActivity {
         login();
     }
 
-    private void saveUserFullName(String uId, String fullName) {
+    private void saveUserFullName(String uId, String fullName, String displayName) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference();
 
         DatabaseReference usersRef = ref.child("users");
 
-        usersRef.child(uId).setValue(new User(fullName, uId));
+        usersRef.child(uId).setValue(new User(fullName, uId, displayName));
     }
 
     private void login() {

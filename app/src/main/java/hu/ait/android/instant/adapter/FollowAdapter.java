@@ -18,7 +18,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
+import hu.ait.android.instant.BottomNavActivity;
+import hu.ait.android.instant.FragmentProfile;
 import hu.ait.android.instant.R;
+import hu.ait.android.instant.data.DataManager;
 import hu.ait.android.instant.data.User;
 
 public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder> {
@@ -27,8 +30,9 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder
     private List<String> userKeys;
     private String uId;
     private DatabaseReference usersRef;
+    private boolean isFollower;
 
-    public FollowAdapter(Context context, String uId, List<User> accounts) {
+    public FollowAdapter(Context context, String uId, List<User> accounts, boolean isFollower) {
         this.context = context;
         this.uId = uId;
 
@@ -36,6 +40,8 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder
         userKeys = new ArrayList<String>();
 
         usersRef = FirebaseDatabase.getInstance().getReference();
+
+        this.isFollower = isFollower;
     }
 
 
@@ -46,42 +52,51 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
-        User userInfo = userList.get(position);
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
+        final User userInfo = userList.get(position);
 
+        // might not need ?
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference();
 
         DatabaseReference usersRef = ref.child("users");
 
-        // TODO
-        // CHANGE THIS SO ITS THE USER
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
         holder.tvLilName.setText(userInfo.getFullName());
-        holder.tvLilDisplayName.setText(user.getDisplayName());
+        holder.tvLilDisplayName.setText(userInfo.getDisplayName());
 
-        if (user.getPhotoUrl() != null) {
-            Glide.with(context).load(user.getPhotoUrl()).into(holder.ivLilAvatar);
+        if (userInfo.getPhotoURL() != null) {
+            Glide.with(context).load(userInfo.getPhotoURL()).into(holder.ivLilAvatar);
         } else {
             holder.ivLilAvatar.setImageResource(R.drawable.instant_logo);
         }
 
-        // TODO
-        // ALSO CHANGE AND CHECK TO SEE IF FOLLOWING OR NOT
+        // look through and change all not following to say follow
+        if(isFollower) {
+
+        }
+
         holder.btnChangeFollow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(holder.btnChangeFollow.getText().toString().equals(R.string.unfollow)) {
+                    holder.btnChangeFollow.setText(R.string.follow);
 
+                    // deal w unfollowing
+                    removeUser(position);
+                } else {
+                    holder.btnChangeFollow.setText(R.string.unfollow);
+
+                    // deal w following
+                    addUser(userInfo, userInfo.getUId());
+                }
             }
         });
 
-        // TODO
-        // ALLOW THIS TO OPEN THIS PERSON'S PROFILE
         holder.ivLilAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                DataManager.getInstance().setData(userInfo.getUId());
+                ((BottomNavActivity)context).showFragment(FragmentProfile.TAG);
             }
         });
     }
@@ -92,18 +107,24 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder
     }
 
     public void addUser(User user, String key) {
-        userList.add(user);
+        /*userList.add(user);
         userKeys.add(key);
 
-        notifyDataSetChanged();
+        notifyDataSetChanged();*/
+
+        // i think this is putting user into following
     }
 
     public void removeUser(int index) {
-        usersRef.child(userKeys.get(index)).removeValue();
+        // change path in here so that it points to my list thingy
+        /*usersRef.child(userKeys.get(index)).removeValue();
 
         userList.remove(index);
         userKeys.remove(index);
-        notifyItemRemoved(index);
+
+        remove user from following -> dont fuck w followers
+
+        //notifyItemRemoved(index);*/
     }
 
     public void removeUserByKey(String key) {

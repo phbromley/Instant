@@ -19,11 +19,14 @@ import com.google.firebase.database.ValueEventListener;
 
 import butterknife.ButterKnife;
 import hu.ait.android.instant.adapter.FollowAdapter;
+import hu.ait.android.instant.data.DataManager;
 import hu.ait.android.instant.data.User;
 
 public class FragmentFollow extends Fragment {
 
     public static final String TAG = "FragmentFollow";
+    public static final String FOLLOWER = "FOLLOWER";
+    public static final String FOLLOWING = "FOLLOWING";
 
     private FollowAdapter adapter;
     private FirebaseUser user;
@@ -56,9 +59,19 @@ public class FragmentFollow extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User userInfo = dataSnapshot.getValue(User.class);
 
-                // TODO
-                // FIND A WAY TO CHECK IF ITS FOLLOWING OR FOLLOWERS
-                adapter = new FollowAdapter(getActivity(), user.getUid(), userInfo.getFollowers());
+                switch(DataManager.getInstance().getData()) {
+                    case FOLLOWER:
+                        adapter = new FollowAdapter(getActivity(), user.getUid(), userInfo.getFollowers(), true);
+                        break;
+                    case FOLLOWING:
+                        adapter = new FollowAdapter(getActivity(), user.getUid(), userInfo.getFollowing(), false);
+                        break;
+                    default:
+                        adapter = new FollowAdapter(getActivity(), user.getUid(), userInfo.getFollowers(), true);
+                        break;
+                }
+
+                DataManager.getInstance().destroy();
 
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
                 layoutManager.setReverseLayout(true);

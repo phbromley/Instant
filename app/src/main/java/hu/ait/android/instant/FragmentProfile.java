@@ -9,7 +9,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -29,6 +32,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import hu.ait.android.instant.adapter.PostsAdapter;
+import hu.ait.android.instant.data.DataManager;
 import hu.ait.android.instant.data.Post;
 import hu.ait.android.instant.data.User;
 
@@ -37,7 +41,7 @@ public class FragmentProfile extends Fragment {
     public static final String TAG = "FragmentProfile";
 
     private PostsAdapter adapter;
-    private FirebaseUser user;
+    private String userId;
 
     private List<User> followers;
     private List<User> following;
@@ -60,6 +64,12 @@ public class FragmentProfile extends Fragment {
     @BindView(R.id.tvFollowing)
     TextView tvFollowing;
 
+    @BindView(R.id.btnFollow)
+    Button btnFollow;
+
+    @BindView(R.id.btnSettings)
+    ImageButton btnSettings;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -68,9 +78,12 @@ public class FragmentProfile extends Fragment {
 
         ButterKnife.bind(this, viewRoot);
 
-        // TODO
-        // ALTER TO ALLOW FOR OTHER PROFILE VIEWING
-        user = FirebaseAuth.getInstance().getCurrentUser();
+        userId = DataManager.getInstance().getData();
+
+        if(userId.equals(""))
+            userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        DataManager.getInstance().destroy();
 
         setupProfile(viewRoot);
 
@@ -79,7 +92,7 @@ public class FragmentProfile extends Fragment {
 
     private void setupProfile(View view) {
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerViewPosts3);
-        adapter = new PostsAdapter(getActivity(), user.getUid());
+        adapter = new PostsAdapter(getActivity(), userId);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setReverseLayout(true);
@@ -94,10 +107,7 @@ public class FragmentProfile extends Fragment {
 
         DatabaseReference usersRef = ref.child("users");
 
-        if(user.getPhotoUrl() != null)
-            Glide.with(getActivity()).load(user.getPhotoUrl()).into(ivAvatar);
-
-        usersRef.orderByKey().equalTo(user.getUid()).addChildEventListener(new ChildEventListener() {
+        usersRef.orderByKey().equalTo(userId).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 User userInfo = dataSnapshot.getValue(User.class);
@@ -105,6 +115,9 @@ public class FragmentProfile extends Fragment {
                 tvName.setText(userInfo.getFullName());
                 tvBio.setText(userInfo.getBiography());
                 tvPosts.setText(String.valueOf(adapter.getItemCount()));
+
+                if(userInfo.getPhotoURL() != null)
+                    Glide.with(getActivity()).load(userInfo.getPhotoURL()).into(ivAvatar);
 
                 followers = userInfo.getFollowers();
                 following = userInfo.getFollowing();
@@ -121,8 +134,10 @@ public class FragmentProfile extends Fragment {
                     tvFollowing.setText(String.valueOf(following.size()));
                 }
 
-                // TODO
-                // if NOT your profile, make follow button visible and settings invisible
+                if(!userId.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                    btnFollow.setVisibility(View.VISIBLE);
+                    btnSettings.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -147,6 +162,18 @@ public class FragmentProfile extends Fragment {
         });
     }
 
+    @OnClick(R.id.layoutFollowers)
+    public void showFollowers() {
+        DataManager.getInstance().setData(FragmentFollow.FOLLOWER);
+        ((BottomNavActivity)getActivity()).showFragment(FragmentFollow.TAG);
+    }
+
+    @OnClick(R.id.layoutFollowing)
+    public void showFollowing() {
+        DataManager.getInstance().setData(FragmentFollow.FOLLOWING);
+        ((BottomNavActivity)getActivity()).showFragment(FragmentFollow.TAG);
+    }
+
     @OnClick(R.id.btnSettings)
     public void openSettings() {
         ((BottomNavActivity)getActivity()).showFragment(FragmentSettings.TAG);
@@ -154,12 +181,13 @@ public class FragmentProfile extends Fragment {
 
     @OnClick(R.id.btnFollow)
     public void followUser() {
-
+        // TODO
+        // this should theoretically not be hard
     }
 
     private void initPostsListener() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("posts");
-        reference.orderByChild("uid").equalTo(user.getUid()).addChildEventListener(new ChildEventListener() {
+        reference.orderByChild("uid").equalTo(userId).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Post post = dataSnapshot.getValue(Post.class);
