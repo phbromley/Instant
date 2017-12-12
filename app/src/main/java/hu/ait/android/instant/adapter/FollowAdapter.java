@@ -10,8 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -19,6 +17,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import hu.ait.android.instant.BottomNavActivity;
@@ -30,10 +29,9 @@ import hu.ait.android.instant.data.User;
 public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder> {
     private Context context;
     private List<User> userList;
-    private List<String> userKeys;
+    private List<Integer> changes;
     private String uId;
     private User userInfo;
-    private DatabaseReference usersRef;
     private boolean isFollower;
 
     public FollowAdapter(Context context, String uId, List<User> accounts, boolean isFollower) {
@@ -43,9 +41,7 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder
         loadUser();
 
         userList = accounts;
-        userKeys = new ArrayList<String>();
-
-        usersRef = FirebaseDatabase.getInstance().getReference();
+        changes = new ArrayList<>();
 
         this.isFollower = isFollower;
     }
@@ -71,22 +67,29 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder
 
         // look through and change all not following to say follow
         if(isFollower) {
-
+            for(User useri: userInfo.getFollowing())
+                if(useri.getUId().equals(user.getUId())){
+                    holder.btnChangeFollow.setText(
+                            context.getResources().getString(R.string.unfollow));
+                }
         }
 
         holder.btnChangeFollow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(holder.btnChangeFollow.getText().toString().equals(R.string.unfollow)) {
-                    holder.btnChangeFollow.setText(R.string.follow);
+                if(holder.btnChangeFollow.getText().toString().equals(
+                        context.getResources().getString(R.string.unfollow))) {
+                    holder.btnChangeFollow.setText(
+                            context.getResources().getString(R.string.follow));
 
                     // deal w unfollowing
-                    removeUser(position);
+                    removeUser(position + 1);
                 } else {
-                    holder.btnChangeFollow.setText(R.string.unfollow);
+                    holder.btnChangeFollow.setText(
+                            context.getResources().getString(R.string.unfollow));
 
                     // deal w following
-                    addUser(user);
+                    addUser(position + 1);
                 }
             }
         });
@@ -101,7 +104,25 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder
     }
 
     public void makeFollowChanges() {
+        List<User> following = userInfo.getFollowing();
 
+        // add the accounts
+        for(int i : changes) {
+            if(i > 0)
+                following.add(userList.get(i - 1));
+        }
+
+        Collections.sort(changes);
+
+        // remove the accounts
+        for(int i: changes) {
+            if(i < 0)
+                following.remove(userList.get(i + 1));
+            else
+                break;
+        }
+
+        saveNewUserProfile(following);
     }
 
     @Override
@@ -109,22 +130,26 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder
         return userList.size();
     }
 
-    // TODO MATT fix this shit tomorrow
-    // implement a stack kind of thing where you keep track of unfollowing and following
-    //   actually perform changes in makeFollowChanges
+    public void addUser(int index) {
+        for(int i = 0; i < changes.size(); i++) {
+            if(changes.get(i) == -index) {
+                changes.remove(i);
+                return;
+            }
+        }
 
-    public void addUser(User user) {
-        /*List<User> following = userInfo.getFollowing();
-        following.add(user);
-
-        saveNewUserProfile(following);*/
+        changes.add(index);
     }
 
     public void removeUser(int index) {
-        /*List<User> following = userInfo.getFollowing();
-        following.remove(index);
+        for(int i = 0; i < changes.size(); i++) {
+            if(changes.get(i) == -index) {
+                changes.remove(i);
+                return;
+            }
+        }
 
-        saveNewUserProfile(following);*/
+        changes.add(-index);
     }
 
     private void saveNewUserProfile(List<User> following) {

@@ -32,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
 
     /*  THINGS TO ACCOMPLISH:
-    *  - have users enter more info in registration (Full name, maybe picture and bio ?)
+    *  - have users enter more info in registration
     *       -- have registration button take you to new activity to enter in info and from there
     *           enter the feed and login
     *
