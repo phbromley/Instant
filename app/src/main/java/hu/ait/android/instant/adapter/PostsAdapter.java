@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -67,7 +68,7 @@ public class PostsAdapter
             holder.ivPostImg.setVisibility(View.GONE);
         }
 
-        if(post.getUid().equals(uId)){
+        if(post.getUid().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
             holder.btnDelete.setVisibility(View.VISIBLE);
             holder.btnDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -77,7 +78,7 @@ public class PostsAdapter
             });
         }
 
-        final User userInfo = DataManager.getUser(post.getUid());
+        final User userInfo = getUser(post.getUid());
 
         if(userInfo.getPhotoURL() != null)
             Glide.with(context).load(userInfo.getPhotoURL()).into(holder.ivProfAvatar);
@@ -89,6 +90,14 @@ public class PostsAdapter
                 ((BottomNavActivity)context).showFragment(FragmentProfile.TAG);
             }
         });
+    }
+
+    public User getUser(String uId) {
+        if(uId.equals(DataManager.getInstance().getCurrentUser().getUId())) {
+            return DataManager.getInstance().getCurrentUser();
+        } else {
+            return DataManager.getUser(uId);
+        }
     }
 
     @Override

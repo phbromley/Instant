@@ -41,6 +41,7 @@ import java.util.UUID;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import hu.ait.android.instant.data.DataManager;
 import hu.ait.android.instant.data.Post;
 import hu.ait.android.instant.data.User;
 
@@ -48,8 +49,8 @@ public class FragmentSettings extends Fragment {
 
     public static final String TAG = "FragmentSettings";
 
-    private FirebaseUser user;
-    private User userInfo;
+    //private FirebaseUser user;
+    private User user;
 
     @BindView(R.id.ivEtAvatar)
     ImageView ivEtAvatar;
@@ -73,7 +74,7 @@ public class FragmentSettings extends Fragment {
 
         ButterKnife.bind(this, viewRoot);
 
-        user = FirebaseAuth.getInstance().getCurrentUser();
+        user = DataManager.getInstance().getCurrentUser();
 
         loadSettings(viewRoot);
 
@@ -81,44 +82,12 @@ public class FragmentSettings extends Fragment {
     }
 
     private void loadSettings(View view) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference();
+        if(user.getPhotoURL() != null)
+            Glide.with(getActivity()).load(user.getPhotoURL()).into(ivEtAvatar);
 
-        DatabaseReference usersRef = ref.child("users");
-
-        usersRef.orderByKey().equalTo(user.getUid()).addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                userInfo = dataSnapshot.getValue(User.class);
-
-                if(userInfo.getPhotoURL() != null)
-                    Glide.with(getActivity()).load(userInfo.getPhotoURL()).into(ivEtAvatar);
-
-                etSetName.setText(userInfo.getFullName());
-                etSetBio.setText(userInfo.getBiography());
-                etSetDispName.setText(user.getDisplayName());
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        etSetName.setText(user.getFullName());
+        etSetBio.setText(user.getBiography());
+        etSetDispName.setText(user.getDisplayName());
     }
 
     @OnClick(R.id.btnEtAvatar)
@@ -142,23 +111,23 @@ public class FragmentSettings extends Fragment {
         String newBio = etSetBio.getText().toString();
 
         if(!newDisplayName.equals(user.getDisplayName())) {
-            user.updateProfile(
+            FirebaseAuth.getInstance().getCurrentUser().updateProfile(
                     new UserProfileChangeRequest.Builder().
                             setDisplayName(newDisplayName).build()
             );
         }
 
-        User newUserProfile = new User(newName, user.getUid(), newDisplayName, newBio);
+        User newUserProfile = new User(newName, user.getUId(), newDisplayName, newBio);
         newUserProfile.setPhotoURL(imgURL);
-        newUserProfile.setFollowers(userInfo.getFollowers());
-        newUserProfile.setFollowing(userInfo.getFollowing());
+        newUserProfile.setFollowers(user.getFollowers());
+        newUserProfile.setFollowing(user.getFollowing());
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference();
 
         DatabaseReference usersRef = ref.child("users");
 
-        usersRef.child(user.getUid()).setValue(newUserProfile);
+        usersRef.child(user.getUId()).setValue(newUserProfile);
 
         // ALSO make sure to eliminate settings fragment from fragment backstack ????
         ((BottomNavActivity)getActivity()).showFragment(FragmentProfile.TAG);

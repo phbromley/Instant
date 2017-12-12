@@ -84,11 +84,18 @@ public class FragmentProfile extends Fragment {
 
         userId = DataManager.getInstance().getData();
 
-        // TODO
-        // change to say unfollow if u follow
+        currentUser = DataManager.getInstance().getCurrentUser();
 
         if(userId.equals(""))
-            userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            userId = currentUser.getUId();
+        else {
+            for(User ui: currentUser.getFollowing()) {
+                if(ui.getUId().equals(userId)) {
+                    toggleBtnFollow();
+                    break;
+                }
+            }
+        }
 
         DataManager.getInstance().destroy();
 
@@ -113,6 +120,8 @@ public class FragmentProfile extends Fragment {
         DatabaseReference ref = database.getReference();
 
         DatabaseReference usersRef = ref.child("users");
+
+        Log.d("TAG_UGH", userId);
 
         usersRef.orderByKey().equalTo(userId).addChildEventListener(new ChildEventListener() {
             @Override
@@ -141,7 +150,7 @@ public class FragmentProfile extends Fragment {
                     tvFollowing.setText(String.valueOf(following.size()));
                 }
 
-                if(!userId.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                if(!userId.equals(currentUser.getUId())) {
                     btnFollow.setVisibility(View.VISIBLE);
                     btnSettings.setVisibility(View.GONE);
                 }
@@ -196,8 +205,6 @@ public class FragmentProfile extends Fragment {
 
         DatabaseReference usersRef = ref.child("users");
 
-        currentUser = DataManager.getInstance().getCurrentUser();
-
         myFollowing = currentUser.getFollowing();
 
         if(btnFollow.getText().toString().equals(
@@ -211,9 +218,22 @@ public class FragmentProfile extends Fragment {
             myFollowing.add(userInfo);
         }
 
+        toggleBtnFollow();
+
         currentUser.setFollowing(myFollowing);
 
         usersRef.child(uId).setValue(currentUser);
+    }
+
+    private void toggleBtnFollow() {
+        if(btnFollow.getText().toString().equals(
+                getActivity().getResources().getString(R.string.unfollow))) {
+            btnFollow.setText(
+                    getActivity().getResources().getString(R.string.follow));
+        } else {
+            btnFollow.setText(
+                    getActivity().getResources().getString(R.string.unfollow));
+        }
     }
 
     private void initPostsListener() {

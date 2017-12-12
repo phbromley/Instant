@@ -2,6 +2,7 @@ package hu.ait.android.instant.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,13 +66,18 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder
             holder.ivLilAvatar.setImageResource(R.drawable.instant_logo);
         }
 
-        // look through and change all not following to say follow
         if(isFollower) {
-            for(User useri: userInfo.getFollowing())
-                if(useri.getUId().equals(user.getUId())){
-                    holder.btnChangeFollow.setText(
-                            context.getResources().getString(R.string.unfollow));
+            boolean followsUser = false;
+            for(User useri: userInfo.getFollowing()) {
+                if (useri.getUId().equals(user.getUId())) {
+                    followsUser = true;
                 }
+            }
+
+            if(!followsUser) {
+                holder.btnChangeFollow.setText(
+                        context.getResources().getString(R.string.follow));
+            }
         }
 
         holder.btnChangeFollow.setOnClickListener(new View.OnClickListener() {
@@ -97,7 +103,7 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder
         holder.ivLilAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DataManager.getInstance().setData(userInfo.getUId());
+                DataManager.getInstance().setData(user.getUId());
                 ((BottomNavActivity)context).showFragment(FragmentProfile.TAG);
             }
         });
@@ -117,12 +123,18 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder
         // remove the accounts
         for(int i: changes) {
             if(i < 0)
-                following.remove(userList.get(i + 1));
+                if(!isFollower)
+                    following.remove(-i - 1);
+                else {
+                    //TODO find this user and then remove it
+                }
             else
                 break;
         }
 
+        changes.clear();
         saveNewUserProfile(following);
+        DataManager.getInstance().updateCurrentFollowing(following);
     }
 
     @Override

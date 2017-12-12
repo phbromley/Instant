@@ -49,9 +49,11 @@ public class LoginActivity extends AppCompatActivity {
     *       -- build in followers and following
     *             --- find way to store lists of user UID's and then can just make a simple fragment
     *                  containing recyclerview of users where each row take you to their profile page
-    *                   ---- things currently needing to be done:
-    *                       > all the things I've aggressively commented in FragmentProfile,
-    *                           FragmentFollow and FollowAdapter
+    *                   ---- TODO:
+    *                       > following recyclerview looks atrocious and not like the row_user.xml
+    *                       > sometimes back pressing from profile to follow fragment is fucked up
+    *
+    *           DONE -> followers will come later but need better UI for sure
     *
     *  - make feed only users you follow and yourself
     *       -- can be attained by selective querying loop in similar fashion to profile
@@ -63,6 +65,8 @@ public class LoginActivity extends AppCompatActivity {
     *
     *  - look into every activity transition and make sure the back stack is maintained properly
     *       -- example: cannot hit back button to go back to login, must logout and settings saving
+    *
+    *  - lol deal with follower mess or at least populate it with fake data
     * */
 
     @Override

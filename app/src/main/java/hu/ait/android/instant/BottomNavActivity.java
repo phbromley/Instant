@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import hu.ait.android.instant.data.DataManager;
 
 public class BottomNavActivity extends AppCompatActivity {
 
@@ -39,6 +40,9 @@ public class BottomNavActivity extends AppCompatActivity {
                             CreatePostActivity.class));
                     return true;
                 case R.id.navigation_profile:
+                    DataManager.getInstance().setData(
+                            FirebaseAuth.getInstance().getCurrentUser().getUid()
+                    );
                     showFragment(FragmentProfile.TAG);
                     return true;
             }
@@ -57,12 +61,18 @@ public class BottomNavActivity extends AppCompatActivity {
 
         showFragment(FragmentFeed.TAG);
 
+        DataManager.getInstance();
+
         requestNeededPermission();
     }
 
     public void showFragment(String fragmentTag) {
         // try to find the fragment
         Fragment newFragment = getSupportFragmentManager().findFragmentByTag(fragmentTag);
+
+        // could check if currentUser is up and then not make it null i guess
+        if(fragmentTag.equals(FragmentProfile.TAG))
+            newFragment = null;
 
         // create if it was not found
         if (newFragment == null) {
@@ -109,10 +119,6 @@ public class BottomNavActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this,
                 android.Manifest.permission.CAMERA) !=
                 PackageManager.PERMISSION_GRANTED) {
-            /*if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    android.Manifest.permission.CAMERA)) {
-
-            }*/
 
             ActivityCompat.requestPermissions(this, new String[]{
                             android.Manifest.permission.CAMERA},
