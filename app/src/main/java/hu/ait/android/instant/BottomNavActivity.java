@@ -1,14 +1,19 @@
 package hu.ait.android.instant;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -30,7 +35,8 @@ public class BottomNavActivity extends AppCompatActivity {
                     showFragment(FragmentFeed.TAG);
                     return true;
                 case R.id.navigation_post:
-                    showFragment(FragmentFeed.TAG);
+                    startActivity(new Intent(BottomNavActivity.this,
+                            CreatePostActivity.class));
                     return true;
                 case R.id.navigation_profile:
                     showFragment(FragmentProfile.TAG);
@@ -50,6 +56,8 @@ public class BottomNavActivity extends AppCompatActivity {
         mBottomNav.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         showFragment(FragmentFeed.TAG);
+
+        requestNeededPermission();
     }
 
     public void showFragment(String fragmentTag) {
@@ -95,5 +103,35 @@ public class BottomNavActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void requestNeededPermission() {
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.CAMERA) !=
+                PackageManager.PERMISSION_GRANTED) {
+            /*if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    android.Manifest.permission.CAMERA)) {
+
+            }*/
+
+            ActivityCompat.requestPermissions(this, new String[]{
+                            android.Manifest.permission.CAMERA},
+                    101);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 101) {
+            if (grantResults.length > 0 &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            } else {
+                Toast.makeText(this, "Permission must be granted",
+                        Toast.LENGTH_SHORT).show();
+                requestNeededPermission();
+            }
+        }
     }
 }

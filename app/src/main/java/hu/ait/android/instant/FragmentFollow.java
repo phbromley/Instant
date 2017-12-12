@@ -29,7 +29,7 @@ public class FragmentFollow extends Fragment {
     public static final String FOLLOWING = "FOLLOWING";
 
     private FollowAdapter adapter;
-    private FirebaseUser user;
+    private User user;
 
     @Nullable
     @Override
@@ -39,7 +39,7 @@ public class FragmentFollow extends Fragment {
 
         ButterKnife.bind(this, viewRoot);
 
-        user = FirebaseAuth.getInstance().getCurrentUser();
+        user = DataManager.getInstance().getCurrentUser();
 
         initRecyclerView(viewRoot);
 
@@ -53,44 +53,27 @@ public class FragmentFollow extends Fragment {
     }
 
     private void initRecyclerView(View view) {
-        final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerViewFollow);
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerViewFollow);
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference();
+        switch (DataManager.getInstance().getData()) {
+            case FOLLOWER:
+                adapter = new FollowAdapter(getActivity(), user.getUId(), user.getFollowers(), true);
+                break;
+            case FOLLOWING:
+                adapter = new FollowAdapter(getActivity(), user.getUId(), user.getFollowing(), false);
+                break;
+            default:
+                adapter = new FollowAdapter(getActivity(), user.getUId(), user.getFollowers(), true);
+                break;
+        }
 
-        DatabaseReference usersRef = ref.child("users");
+        DataManager.getInstance().destroy();
 
-        usersRef.orderByKey().equalTo(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                User userInfo = dataSnapshot.getValue(User.class);
-
-                switch(DataManager.getInstance().getData()) {
-                    case FOLLOWER:
-                        adapter = new FollowAdapter(getActivity(), user.getUid(), userInfo.getFollowers(), true);
-                        break;
-                    case FOLLOWING:
-                        adapter = new FollowAdapter(getActivity(), user.getUid(), userInfo.getFollowing(), false);
-                        break;
-                    default:
-                        adapter = new FollowAdapter(getActivity(), user.getUid(), userInfo.getFollowers(), true);
-                        break;
-                }
-
-                DataManager.getInstance().destroy();
-
-                LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-                layoutManager.setReverseLayout(true);
-                layoutManager.setStackFromEnd(true);
-                recyclerView.setLayoutManager(layoutManager);
-                recyclerView.setAdapter(adapter);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager.setReverseLayout(true);
+        layoutManager.setStackFromEnd(true);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
     }
 
 }

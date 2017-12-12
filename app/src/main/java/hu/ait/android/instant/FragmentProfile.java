@@ -84,6 +84,9 @@ public class FragmentProfile extends Fragment {
 
         userId = DataManager.getInstance().getData();
 
+        // TODO
+        // change to say unfollow if u follow
+
         if(userId.equals(""))
             userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -186,25 +189,14 @@ public class FragmentProfile extends Fragment {
     @OnClick(R.id.btnFollow)
     public void followUser() {
         String uId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        List<User> myFollowing;
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference();
 
         DatabaseReference usersRef = ref.child("users");
 
-        List<User> myFollowing;
-
-        usersRef.orderByKey().equalTo(uId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                currentUser = dataSnapshot.getValue(User.class);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        currentUser = DataManager.getInstance().getCurrentUser();
 
         myFollowing = currentUser.getFollowing();
 

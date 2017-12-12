@@ -213,7 +213,7 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder
 
             tvLilName = itemView.findViewById(R.id.tvLilName);
             tvLilDisplayName = itemView.findViewById(R.id.tvLilDisplayName);
-            btnChangeFollow = itemView.findViewById(R.id.btnFollow);
+            btnChangeFollow = itemView.findViewById(R.id.btnLilFollow);
             ivLilAvatar = itemView.findViewById(R.id.ivLilAvatar);
         }
     }

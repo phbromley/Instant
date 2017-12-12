@@ -54,21 +54,17 @@ public class CreatePostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_post);
 
         ButterKnife.bind(this);
-
-        //requestNeededPermission();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        btnAttach.setVisibility(View.GONE);
-        requestNeededPermission();
     }
 
     @OnClick(R.id.btnSend)
     void sendClick() {
-        if (imgAttach.getVisibility() == View.GONE) {
-            uploadPost();
+        if(imgAttach.getVisibility() != View.VISIBLE) {
+            Toast.makeText(CreatePostActivity.this, "You must post a picture!", Toast.LENGTH_SHORT).show();
         } else {
             try {
                 uploadPostWithImage();
@@ -131,53 +127,17 @@ public class CreatePostActivity extends AppCompatActivity {
 
     @OnClick(R.id.btnAttach)
     public void attachClicked() {
+        // TODO someone make this entire activity pretty pls
         Intent intentCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intentCamera, 101);
-    }
-
-    private void requestNeededPermission() {
-        if (ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.CAMERA) !=
-                PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    android.Manifest.permission.CAMERA)) {
-                // Toast...
-            }
-
-            ActivityCompat.requestPermissions(this, new String[]{
-                            android.Manifest.permission.CAMERA},
-                    101);
-        } else {
-            // we have the permission
-            btnAttach.setVisibility(View.VISIBLE);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == 101) {
-            if (grantResults.length > 0 &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                Toast.makeText(this, "Permission granted, jupeee!",
-                        Toast.LENGTH_SHORT).show();
-
-                // we have the permission
-                btnAttach.setVisibility(View.VISIBLE);
-            } else {
-                Toast.makeText(this, "Permission not granted :(",
-                        Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 101 && resultCode == RESULT_OK) {
             Bitmap img = (Bitmap) data.getExtras().get("data");
-            imgAttach.setImageBitmap(img);
             imgAttach.setVisibility(View.VISIBLE);
+            imgAttach.setImageBitmap(img);
         }
     }
 }
