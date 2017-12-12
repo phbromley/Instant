@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -18,8 +19,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
+import hu.ait.android.instant.BottomNavActivity;
+import hu.ait.android.instant.FragmentProfile;
 import hu.ait.android.instant.R;
+import hu.ait.android.instant.data.DataManager;
 import hu.ait.android.instant.data.Post;
+import hu.ait.android.instant.data.User;
 
 public class PostsAdapter
         extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
@@ -28,7 +33,6 @@ public class PostsAdapter
     private List<Post> postList;
     private List<String> postKeys;
     private String uId;
-    private int lastPosition = -1;
     private DatabaseReference postsRef;
 
     public PostsAdapter(Context context, String uId) {
@@ -72,6 +76,19 @@ public class PostsAdapter
                 }
             });
         }
+
+        final User userInfo = DataManager.getUser(post.getUid());
+
+        if(userInfo.getPhotoURL() != null)
+            Glide.with(context).load(userInfo.getPhotoURL()).into(holder.ivProfAvatar);
+
+        holder.layoutAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DataManager.getInstance().setData(userInfo.getUId());
+                ((BottomNavActivity)context).showFragment(FragmentProfile.TAG);
+            }
+        });
     }
 
     @Override
@@ -111,6 +128,8 @@ public class PostsAdapter
         public TextView tvBody;
         public ImageButton btnDelete;
         public ImageView ivPostImg;
+        public ImageView ivProfAvatar;
+        public LinearLayout layoutAccount;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -120,6 +139,8 @@ public class PostsAdapter
             tvBody = itemView.findViewById(R.id.tvBody);
             btnDelete = itemView.findViewById(R.id.btnDelete);
             ivPostImg = itemView.findViewById(R.id.ivPostImg);
+            ivProfAvatar = itemView.findViewById(R.id.ivProfAvatar);
+            layoutAccount = itemView.findViewById(R.id.layoutAccount);
         }
     }
 }

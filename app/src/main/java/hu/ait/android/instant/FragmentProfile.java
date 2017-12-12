@@ -23,6 +23,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
@@ -42,6 +43,9 @@ public class FragmentProfile extends Fragment {
 
     private PostsAdapter adapter;
     private String userId;
+    private User userInfo;
+
+    private User currentUser;
 
     private List<User> followers;
     private List<User> following;
@@ -110,7 +114,7 @@ public class FragmentProfile extends Fragment {
         usersRef.orderByKey().equalTo(userId).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                User userInfo = dataSnapshot.getValue(User.class);
+                userInfo = dataSnapshot.getValue(User.class);
 
                 tvName.setText(userInfo.getFullName());
                 tvBio.setText(userInfo.getBiography());
@@ -123,13 +127,13 @@ public class FragmentProfile extends Fragment {
                 following = userInfo.getFollowing();
 
                 if(followers == null) {
-                    tvFollowers.setText("0");
+                    tvFollowers.setText("NaN");
                 } else {
                     tvFollowers.setText(String.valueOf(followers.size()));
                 }
 
                 if(following == null) {
-                    tvFollowers.setText("0");
+                    tvFollowers.setText("NaN");
                 } else {
                     tvFollowing.setText(String.valueOf(following.size()));
                 }
@@ -181,8 +185,43 @@ public class FragmentProfile extends Fragment {
 
     @OnClick(R.id.btnFollow)
     public void followUser() {
-        // TODO
-        // this should theoretically not be hard
+        String uId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference();
+
+        DatabaseReference usersRef = ref.child("users");
+
+        List<User> myFollowing;
+
+        usersRef.orderByKey().equalTo(uId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                currentUser = dataSnapshot.getValue(User.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        myFollowing = currentUser.getFollowing();
+
+        if(btnFollow.getText().toString().equals(
+                getActivity().getResources().getString(R.string.unfollow))) {
+            for(int i = 0; i < myFollowing.size(); i++)
+                if(myFollowing.get(i).getUId().equals(userId)) {
+                    myFollowing.remove(i);
+                    break;
+                }
+        } else {
+            myFollowing.add(userInfo);
+        }
+
+        currentUser.setFollowing(myFollowing);
+
+        usersRef.child(uId).setValue(currentUser);
     }
 
     private void initPostsListener() {
