@@ -59,6 +59,8 @@ public class LoginActivity extends AppCompatActivity {
     *  - make feed only users you follow and yourself
     *       -- can be attained by selective querying loop in similar fashion to profile
     *
+    *           DONE -> was as predicted, UIDs of ppl follow are in feedIDs
+    *
     *  - implement search ? make the middle tab in the bottom navigation view search fragment
     *       -- not really important for demo but if we have time
     *

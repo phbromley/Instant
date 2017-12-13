@@ -27,7 +27,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -47,8 +49,8 @@ public class FragmentProfile extends Fragment {
 
     private User currentUser;
 
-    private List<User> followers;
-    private List<User> following;
+    private List<String> followers;
+    private List<String> following;
 
     @BindView(R.id.ivAvatar)
     ImageView ivAvatar;
@@ -89,8 +91,8 @@ public class FragmentProfile extends Fragment {
         if(userId.equals(""))
             userId = currentUser.getUId();
         else {
-            for(User ui: currentUser.getFollowing()) {
-                if(ui.getUId().equals(userId)) {
+            for(String uId: currentUser.getFollowing()) {
+                if(uId.equals(userId)) {
                     toggleBtnFollow();
                     break;
                 }
@@ -120,8 +122,6 @@ public class FragmentProfile extends Fragment {
         DatabaseReference ref = database.getReference();
 
         DatabaseReference usersRef = ref.child("users");
-
-        Log.d("TAG_UGH", userId);
 
         usersRef.orderByKey().equalTo(userId).addChildEventListener(new ChildEventListener() {
             @Override
@@ -180,13 +180,13 @@ public class FragmentProfile extends Fragment {
 
     @OnClick(R.id.layoutFollowers)
     public void showFollowers() {
-        DataManager.getInstance().setData(FragmentFollow.FOLLOWER);
+        DataManager.getInstance().setData(FragmentFollow.FOLLOWER + ":" + userId);
         ((BottomNavActivity)getActivity()).showFragment(FragmentFollow.TAG);
     }
 
     @OnClick(R.id.layoutFollowing)
     public void showFollowing() {
-        DataManager.getInstance().setData(FragmentFollow.FOLLOWING);
+        DataManager.getInstance().setData(FragmentFollow.FOLLOWING + ":" + userId);
         ((BottomNavActivity)getActivity()).showFragment(FragmentFollow.TAG);
     }
 
@@ -198,7 +198,7 @@ public class FragmentProfile extends Fragment {
     @OnClick(R.id.btnFollow)
     public void followUser() {
         String uId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        List<User> myFollowing;
+        List<String> myFollowing;
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference();
@@ -210,19 +210,61 @@ public class FragmentProfile extends Fragment {
         if(btnFollow.getText().toString().equals(
                 getActivity().getResources().getString(R.string.unfollow))) {
             for(int i = 0; i < myFollowing.size(); i++)
-                if(myFollowing.get(i).getUId().equals(userId)) {
+                if(myFollowing.get(i).equals(userId)) {
                     myFollowing.remove(i);
                     break;
                 }
+            makeUnfollower();
         } else {
-            myFollowing.add(userInfo);
+            myFollowing.add(userInfo.getUId());
+            makeFollower();
         }
+
+        updateFollowCount();
 
         toggleBtnFollow();
 
         currentUser.setFollowing(myFollowing);
 
         usersRef.child(uId).setValue(currentUser);
+    }
+
+    private void updateFollowCount() {
+        tvFollowers.setText(String.valueOf(followers.size()));
+    }
+
+    public void makeFollower() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference();
+
+        DatabaseReference usersRef = ref.child("users");
+
+        List<String> followers = userInfo.getFollowers();
+
+        followers.add(currentUser.getUId());
+
+        userInfo.setFollowers(followers);
+
+        usersRef.child(userId).setValue(userInfo);
+    }
+
+    public void makeUnfollower() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference();
+
+        DatabaseReference usersRef = ref.child("users");
+
+        List<String> followers = userInfo.getFollowers();
+
+        for(int i = 0; i < followers.size(); i++)
+            if(followers.get(i).equals(currentUser.getUId())) {
+                followers.remove(i);
+                break;
+            }
+
+        userInfo.setFollowers(followers);
+
+        usersRef.child(userId).setValue(userInfo);
     }
 
     private void toggleBtnFollow() {

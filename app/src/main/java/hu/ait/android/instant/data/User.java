@@ -11,8 +11,8 @@ public class User {
     private String biography;
     private String photoURL;
 
-    private List<User> following;
-    private List<User> followers;
+    private List<String> following;
+    private List<String> followers;
 
     public User() {
         following = new ArrayList<>();
@@ -63,30 +63,41 @@ public class User {
         this.biography = biography;
     }
 
-    public List<User> getFollowing() {
+    public List<String> getFollowing() {
         return following;
     }
 
-    public void setFollowing(List<User> following) {
+    public void setFollowing(List<String> following) {
         this.following = following;
     }
 
     public void addFollowing(User user) {
-        following.add(user);
+        following.add(user.getUId());
     }
 
     public void removeFollowing(User user) {
-        following.remove(user);
+        for(int i = 0; i < following.size(); i++)
+            if(following.get(i).equals(user.getUId())) {
+                following.remove(i);
+                break;
+            }
     }
 
-    // TODO
-    // FIGURE OUT HOW TO MAINTAIN FOLLOWERS
+    public void addFollower(User user) { followers.add(user.getUId()); }
 
-    public List<User> getFollowers() {
+    public void removeFollower(User user) {
+        for(int i = 0; i < followers.size(); i++)
+            if(followers.get(i).equals(user.getUId())) {
+                followers.remove(i);
+                break;
+            }
+    }
+
+    public List<String> getFollowers() {
         return followers;
     }
 
-    public void setFollowers(List<User> followers) {
+    public void setFollowers(List<String> followers) {
         this.followers = followers;
     }
 

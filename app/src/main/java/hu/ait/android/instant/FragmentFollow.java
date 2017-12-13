@@ -5,21 +5,16 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import butterknife.ButterKnife;
 import hu.ait.android.instant.adapter.FollowAdapter;
 import hu.ait.android.instant.data.DataManager;
 import hu.ait.android.instant.data.User;
-
-/*  TODO NOTE ABOUT FOLLOWERS
-*     WHEN YOU FOLLOW AN ACCOUNT YOU CAN CHANGE THAT ACCOUNT'S FOLLOWERS
-*     LIST TO REFLECT THAT AND MAKE SURE EACH TIME DB PULLS THROUGH NEW DATA
-*     LIKE IN NOTIFYITEMCHANGED()
-* */
 
 public class FragmentFollow extends Fragment {
 
@@ -38,9 +33,17 @@ public class FragmentFollow extends Fragment {
 
         ButterKnife.bind(this, viewRoot);
 
-        user = DataManager.getInstance().getCurrentUser();
+        String[] data = DataManager.getInstance().getData().split(":");
 
-        initRecyclerView(viewRoot);
+        String followString = data[0];
+        String userId = data[1];
+
+        if(userId.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+            user = DataManager.getInstance().getCurrentUser();
+        else
+            user = DataManager.getUser(userId);
+
+        initRecyclerView(viewRoot, followString);
 
         return viewRoot;
     }
@@ -51,18 +54,20 @@ public class FragmentFollow extends Fragment {
         super.onPause();
     }
 
-    private void initRecyclerView(View view) {
+    private void initRecyclerView(View view, String fString) {
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerViewFollow);
 
-        switch (DataManager.getInstance().getData()) {
+
+
+        switch (fString) {
             case FOLLOWER:
-                adapter = new FollowAdapter(getActivity(), user.getUId(), user.getFollowers(), true);
+                adapter = new FollowAdapter(getActivity(), user.getFollowers(), true);
                 break;
             case FOLLOWING:
-                adapter = new FollowAdapter(getActivity(), user.getUId(), user.getFollowing(), false);
+                adapter = new FollowAdapter(getActivity(), user.getFollowing(), false);
                 break;
             default:
-                adapter = new FollowAdapter(getActivity(), user.getUId(), user.getFollowers(), true);
+                adapter = new FollowAdapter(getActivity(), user.getFollowers(), true);
                 break;
         }
 

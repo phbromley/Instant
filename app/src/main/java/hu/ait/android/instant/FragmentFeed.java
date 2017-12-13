@@ -72,8 +72,8 @@ public class FragmentFeed extends Fragment {
 
         feedIDs.add(currentUser.getUId());
 
-        for(User user: currentUser.getFollowing()) {
-            feedIDs.add(user.getUId());
+        for(String uId: currentUser.getFollowing()) {
+            feedIDs.add(uId);
         }
     }
 
@@ -98,8 +98,8 @@ public class FragmentFeed extends Fragment {
                 if(reset == 0)
                     reinitFeedIDs();
 
-                if(feedIDs.contains(post.getUid()))
-                    adapter.addPost(post, dataSnapshot.getKey());
+                //if(feedIDs.contains(post.getUid()))
+                adapter.addPost(post, dataSnapshot.getKey());
 
                 reset++;
             }

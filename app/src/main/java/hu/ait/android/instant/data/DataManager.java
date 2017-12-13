@@ -1,5 +1,7 @@
 package hu.ait.android.instant.data;
 
+import android.util.Log;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -75,7 +77,7 @@ public class DataManager {
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 User userInfo = dataSnapshot.getValue(User.class);
 
-                currentUser.setUId(userInfo.getUId());
+                currentUser.setUId(FirebaseAuth.getInstance().getCurrentUser().getUid());
                 currentUser.setFullName(userInfo.getFullName());
                 currentUser.setDisplayName(userInfo.getDisplayName());
                 currentUser.setBiography(userInfo.getBiography());
@@ -102,8 +104,8 @@ public class DataManager {
     }
 
     private void loadCacheableUsers() {
-        for(User user: currentUser.getFollowing()) {
-            cachedUsers.put(user.getUId(), user);
+        for(String uId: currentUser.getFollowing()) {
+            DataManager.getUser(uId);
         }
     }
 
@@ -117,6 +119,12 @@ public class DataManager {
 
     public void cacheUser(User user) {
         cachedUsers.put(user.getUId(), user);
+    }
+
+    public void updateUser(User user) {
+        if(cachedUsers.containsKey(user.getUId())) {
+            cachedUsers.put(user.getUId(), user);
+        }
     }
 
     public static User getUser(String uId) {
@@ -145,7 +153,9 @@ public class DataManager {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
+                User userInfo = dataSnapshot.getValue(User.class);
+                Log.d("TAG_HAHA", String.valueOf(userInfo.getFollowers().size()));
+                DataManager.getInstance().updateUser(userInfo);
             }
 
             @Override
@@ -168,16 +178,16 @@ public class DataManager {
         return user;
     }
 
-    public void updateCurrentFollowing(List<User> following) {
+    public void updateCurrentFollowing(List<String> following) {
         currentUser.setFollowing(following);
     }
 
-    public void destoryCurrentUser() {
+    public void destroyCurrentUser() {
         currentUser = null;
     }
 
     public static void signOut() {
-        getInstance().destoryCurrentUser();
+        getInstance().destroyCurrentUser();
         instance = null;
     }
 }
