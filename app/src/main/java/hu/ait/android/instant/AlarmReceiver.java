@@ -10,8 +10,6 @@ import android.support.v4.app.NotificationCompat;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
-    private int MID = 100;
-
     @Override
     public void onReceive(Context context, Intent intent) {
         // TODO Auto-generated method stub
@@ -34,9 +32,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setAutoCancel(true).setWhen(when)
                 .setContentIntent(pendingIntent)
                 .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000});
-        notificationManager.notify(MID, mNotifyBuilder.build());
-        MID++;
-
+        notificationManager.notify(100, mNotifyBuilder.build());
     }
 
 }

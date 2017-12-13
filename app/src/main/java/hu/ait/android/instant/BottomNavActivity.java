@@ -85,7 +85,7 @@ public class BottomNavActivity extends AppCompatActivity {
         calendar.set(Calendar.MINUTE, 45);
         calendar.set(Calendar.SECOND, 0);
         Intent intent1 = new Intent(BottomNavActivity.this, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(BottomNavActivity.this, 0, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager am = (AlarmManager) BottomNavActivity.this.getSystemService(BottomNavActivity.this.ALARM_SERVICE);
         am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
