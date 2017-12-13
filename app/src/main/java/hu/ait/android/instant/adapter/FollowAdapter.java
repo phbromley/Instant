@@ -49,7 +49,7 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View row = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_user, parent, false);
+        View row = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_users, parent, false);
         return new ViewHolder(row);
     }
 
