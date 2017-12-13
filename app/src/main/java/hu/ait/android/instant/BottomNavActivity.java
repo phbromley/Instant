@@ -1,5 +1,7 @@
 package hu.ait.android.instant;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -10,6 +12,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -17,6 +22,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -56,7 +62,9 @@ public class BottomNavActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bottom_nav);
-
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(null);
         ButterKnife.bind(this);
 
         mBottomNav.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -71,6 +79,15 @@ public class BottomNavActivity extends AppCompatActivity {
         }
 
         requestNeededPermission();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 22);
+        calendar.set(Calendar.MINUTE, 45);
+        calendar.set(Calendar.SECOND, 0);
+        Intent intent1 = new Intent(BottomNavActivity.this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(BottomNavActivity.this, 0, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager am = (AlarmManager) BottomNavActivity.this.getSystemService(BottomNavActivity.this.ALARM_SERVICE);
+        am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
 
     public void showFragment(String fragmentTag) {
@@ -147,5 +164,19 @@ public class BottomNavActivity extends AppCompatActivity {
                 requestNeededPermission();
             }
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.create_post, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent = new Intent(BottomNavActivity.this, CreatePostActivity.class);
+        startActivity(intent);
+        return true;
     }
 }
