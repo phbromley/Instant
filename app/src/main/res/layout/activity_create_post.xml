@@ -17,7 +17,7 @@
         android:layout_height="325dp"
         android:visibility="visible"
         android:layout_gravity="center"
-        android:src="@drawable/ic_menu_camera"/>
+        android:src="@drawable/picture_frame"/>
 
     <EditText
         android:id="@+id/etTitle"
