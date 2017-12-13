@@ -107,6 +107,12 @@ public class DataManager {
         for(String uId: currentUser.getFollowing()) {
             DataManager.getUser(uId);
         }
+
+        for(String uId: currentUser.getFollowers()) {
+            DataManager.getUser(uId);
+        }
+
+        cacheUser(currentUser);
     }
 
     public boolean containsUser(String uId) {
@@ -146,15 +152,17 @@ public class DataManager {
                 user.setUId(userInfo.getUId());
                 user.setFullName(userInfo.getFullName());
                 user.setDisplayName(userInfo.getDisplayName());
+                user.setBiography(userInfo.getBiography());
                 user.setPhotoURL(userInfo.getPhotoURL());
                 user.setFollowing(userInfo.getFollowing());
                 user.setFollowers(userInfo.getFollowers());
+                DataManager.getInstance().cacheUser(user);
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 User userInfo = dataSnapshot.getValue(User.class);
-                Log.d("TAG_HAHA", String.valueOf(userInfo.getFollowers().size()));
+
                 DataManager.getInstance().updateUser(userInfo);
             }
 
@@ -174,7 +182,7 @@ public class DataManager {
             }
         });
 
-        DataManager.getInstance().cacheUser(user);
+
         return user;
     }
 
