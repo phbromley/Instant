@@ -6,10 +6,15 @@
         android:icon="@drawable/ic_home_black_24dp"
         android:title="@string/feed" />
 
+    <!--<item-->
+        <!--android:id="@+id/navigation_post"-->
+        <!--android:icon="@drawable/ic_menu_camera"-->
+        <!--android:title="@string/post" />-->
+
     <item
-        android:id="@+id/navigation_post"
-        android:icon="@drawable/ic_menu_camera"
-        android:title="@string/post" />
+        android:id="@+id/navigation_search"
+        android:icon="@drawable/ic_action_search"
+        android:title="Search" />
 
     <item
         android:id="@+id/navigation_profile"

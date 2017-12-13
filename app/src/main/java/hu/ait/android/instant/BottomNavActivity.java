@@ -43,9 +43,13 @@ public class BottomNavActivity extends AppCompatActivity {
                 case R.id.navigation_feed:
                     showFragment(FragmentFeed.TAG);
                     return true;
-                case R.id.navigation_post:
-                    startActivity(new Intent(BottomNavActivity.this,
-                            CreatePostActivity.class));
+//                case R.id.navigation_post:
+//                    startActivity(new Intent(BottomNavActivity.this,
+//                            CreatePostActivity.class));
+//                    return true;
+
+                case R.id.navigation_search:
+                    showFragment(FragmentSearch.TAG);
                     return true;
                 case R.id.navigation_profile:
                     DataManager.getInstance().setData(
@@ -112,6 +116,9 @@ public class BottomNavActivity extends AppCompatActivity {
                     break;
                 case FragmentFollow.TAG:
                     newFragment = new FragmentFollow();
+                    break;
+                case FragmentSearch.TAG:
+                    newFragment = new FragmentSearch();
                     break;
                 default:
                     newFragment = new FragmentFeed();
