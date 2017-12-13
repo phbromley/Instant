@@ -98,8 +98,10 @@ public class FragmentFeed extends Fragment {
                 if(reset == 0)
                     reinitFeedIDs();
 
-                //if(feedIDs.contains(post.getUid()))
-                adapter.addPost(post, dataSnapshot.getKey());
+                if(feedIDs.contains(post.getUid()))
+                    adapter.addPost(post, dataSnapshot.getKey());
+
+                DataManager.getUser(post.getUid());
 
                 reset++;
             }

@@ -2,7 +2,6 @@ package hu.ait.android.instant.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,14 +10,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import hu.ait.android.instant.BottomNavActivity;
 import hu.ait.android.instant.FragmentProfile;
@@ -78,6 +76,9 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder
             }
         }
 
+        if(user.getUId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+            holder.btnChangeFollow.setVisibility(View.INVISIBLE);
+
         holder.btnChangeFollow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -120,19 +121,15 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder
 
         // remove the accounts
         for(int i: changes) {
-            if(i < 0)
-                if(!isFollower)
-                    following.remove(-i - 1);
-                else {
-                    String userId = userList.get(-i - 1);
+            if(i < 0) {
+                String userId = userList.get(-i - 1);
 
-                    for(int index = 0; index < following.size(); index++)
-                        if(userId.equals(following.get(index))) {
-                            following.remove(index);
-                            break;
-                        }
-                }
-            else
+                for (int index = 0; index < following.size(); index++)
+                    if (userId.equals(following.get(index))) {
+                        following.remove(index);
+                        break;
+                    }
+            } else
                 break;
         }
 
@@ -201,13 +198,11 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder
 
         List<String> followers = user.getFollowers();
 
-        followers.add(userInfo.getUId());
+        followers.add(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         user.setFollowers(followers);
 
-        Log.d("TAG_NOPE", String.valueOf(user.getFollowers().size()));
-
-        usersRef.child(user.getUId()).setValue(user);
+        usersRef.child(userId).setValue(user);
     }
 
     public void makeUnfollower(String userId) {
@@ -221,19 +216,14 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.ViewHolder
         List<String> followers = user.getFollowers();
 
         for(int i = 0; i < followers.size(); i++)
-            if(followers.get(i).equals(userInfo.getUId())) {
+            if(followers.get(i).equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                 followers.remove(i);
                 break;
             }
 
         user.setFollowers(followers);
 
-        Log.d("TAG_NOPE", String.valueOf(user.getFollowers().size()));
-
-        //Map<String, Object> fuck = new HashMap<>();
-        //fuck.put(user.getUId(), user);
-        usersRef.child(user.getUId()).setValue(user);
-        //usersRef.updateChildren(fuck);
+        usersRef.child(userId).setValue(user);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

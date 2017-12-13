@@ -40,8 +40,10 @@ public class FragmentFollow extends Fragment {
 
         if(userId.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
             user = DataManager.getInstance().getCurrentUser();
-        else
+        else {
             user = DataManager.getUser(userId);
+            DataManager.getInstance();
+        }
 
         initRecyclerView(viewRoot, followString);
 
