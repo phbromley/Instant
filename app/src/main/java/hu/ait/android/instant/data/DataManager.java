@@ -60,7 +60,7 @@ public class DataManager {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 User userInfo = dataSnapshot.getValue(User.class);
 
-                currentUser.setUId(userInfo.getUId());
+                currentUser.setUId(FirebaseAuth.getInstance().getCurrentUser().getUid());
                 currentUser.setFullName(userInfo.getFullName());
                 currentUser.setDisplayName(userInfo.getDisplayName());
                 currentUser.setBiography(userInfo.getBiography());
@@ -170,5 +170,14 @@ public class DataManager {
 
     public void updateCurrentFollowing(List<User> following) {
         currentUser.setFollowing(following);
+    }
+
+    public void destoryCurrentUser() {
+        currentUser = null;
+    }
+
+    public static void signOut() {
+        getInstance().destoryCurrentUser();
+        instance = null;
     }
 }

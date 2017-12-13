@@ -23,6 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import hu.ait.android.instant.data.DataManager;
 import hu.ait.android.instant.data.User;
 
 public class RegistrationActivity extends AppCompatActivity {
@@ -70,7 +71,8 @@ public class RegistrationActivity extends AppCompatActivity {
                                             setDisplayName(usernameFromEmail(fbUser.getEmail())).build()
                             );
 
-                            //fbUser.updateProfile(new UserProfileChangeRequest.Builder().setPhotoUri())
+
+                            DataManager.getInstance();
 
                             saveUserFullName(fbUser.getUid(), etName.getText().toString(),
                                     usernameFromEmail(fbUser.getEmail()));

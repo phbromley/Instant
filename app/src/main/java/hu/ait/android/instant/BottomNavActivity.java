@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.concurrent.TimeUnit;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import hu.ait.android.instant.data.DataManager;
@@ -61,7 +63,12 @@ public class BottomNavActivity extends AppCompatActivity {
 
         showFragment(FragmentFeed.TAG);
 
-        DataManager.getInstance();
+        //DataManager.getInstance();
+        try {
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         requestNeededPermission();
     }
@@ -104,6 +111,7 @@ public class BottomNavActivity extends AppCompatActivity {
 
     public void logout() {
         FirebaseAuth.getInstance().signOut();
+        DataManager.signOut();
         Intent intent = new Intent(BottomNavActivity.this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);

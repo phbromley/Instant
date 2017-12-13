@@ -20,6 +20,7 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import hu.ait.android.instant.data.DataManager;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -101,6 +102,7 @@ public class LoginActivity extends AppCompatActivity {
                 progressDialog.dismiss();
 
                 if (task.isSuccessful()) {
+                    DataManager.getInstance();
                     startActivity(new Intent(LoginActivity.this,
                             BottomNavActivity.class));
 

@@ -43,6 +43,7 @@ public class FragmentFeed extends Fragment {
     private PostsAdapter adapter;
     private Set<String> feedIDs;
     private User currentUser;
+    private int reset;
 
     @Nullable
     @Override
@@ -52,12 +53,19 @@ public class FragmentFeed extends Fragment {
 
         currentUser = DataManager.getInstance().getCurrentUser();
         feedIDs = new HashSet<>();
+        reset = 0;
 
         initRecyclerView(viewRoot);
 
         initPostsListener();
 
         return viewRoot;
+    }
+
+    @Override
+    public void onPause() {
+        reset = 0;
+        super.onPause();
     }
 
     private void reinitFeedIDs() {
@@ -87,10 +95,13 @@ public class FragmentFeed extends Fragment {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Post post = dataSnapshot.getValue(Post.class);
 
-                reinitFeedIDs();
+                if(reset == 0)
+                    reinitFeedIDs();
 
                 if(feedIDs.contains(post.getUid()))
                     adapter.addPost(post, dataSnapshot.getKey());
+
+                reset++;
             }
 
             @Override
