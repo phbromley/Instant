@@ -30,6 +30,8 @@
         <activity
             android:name=".RegistrationActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <receiver android:name=".AlarmReceiver"/>
     </application>
 
 </manifest>
